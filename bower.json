@@ -1,0 +1,11 @@
+{
+    "name": "timer",
+    "version": "0.0.0",
+    "dependencies": {
+        "viewpager": "https://github.com/antonj/viewpager.js.git",
+        "jquery": "~2.1.0"
+    },
+    "devDependencies": {
+        "qunit": "*"
+    }
+}

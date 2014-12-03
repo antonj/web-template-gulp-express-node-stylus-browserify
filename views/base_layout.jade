@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    meta(name="viewport", content="width=device-width, user-scalable=yes, initial-scale=1.0")
+    link(href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700&subset=latin,latin-ext', rel='stylesheet', type='text/css')
+    title= title
+    link(rel='stylesheet', href='/css/base.css', media="all")
+  body
+    include _header.jade
+
+    main
+      block content
+      
+    script(src="/js/main.js")
