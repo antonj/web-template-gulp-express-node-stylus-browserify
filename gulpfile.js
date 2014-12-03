@@ -1,6 +1,7 @@
 /*global require, exports, module*/
 
 var gulp = require('gulp'),
+    gutil = require('gulp-util'),
     server = require('gulp-express'),
     stylus = require('gulp-stylus'),
     nib = require('nib'),
@@ -14,10 +15,11 @@ gulp.task('bower', function () {
 
 // Javascript Browserify
 gulp.task('js', function () {
-    // Single entry point to browserify
-    gulp.src('public_src/js/main.js')
-        .pipe(browserify())
-        .pipe(gulp.dest('./public/js'));
+  // Single entry point to browserify
+  gulp.src('public_src/js/main.js')
+    .pipe(browserify().on('error', gutil.log))
+    .pipe(gulp.dest('./public/js'))
+  ;
 });
 
 // CSS
@@ -43,4 +45,5 @@ gulp.task('watch', function() {
 });
 
 
+gulp.task('init', ['bower']);
 gulp.task('default', ['bower', 'css', 'js', 'server', 'watch']);
