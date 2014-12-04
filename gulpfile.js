@@ -7,6 +7,8 @@ var gulp = require('gulp'),
     nib = require('nib'),
     livereload = require('gulp-livereload'),
     browserify = require('gulp-browserify'),
+    jshint = require('gulp-jshint'),
+    shell = require('child_process').exec,
     bower = require('gulp-bower');
 
 gulp.task('bower', function () {
@@ -22,6 +24,12 @@ gulp.task('js', function () {
   ;
 });
 
+gulp.task('lint', function() {
+  return gulp.src(['public_src/js/**/*.js', '!public_src/js/libs/**'])
+    .pipe(jshint({ globalstrict: true }))
+    .pipe(jshint.reporter('default'));
+});
+
 // CSS
 gulp.task('css', function () {
   gulp.src('./public_src/styl/base.styl')
@@ -34,11 +42,13 @@ gulp.task('server', function () {
   server.run({
     file: 'app.js'
   });
+  var sys = require('sys');
+  shell('open http://localhost:3000');
 });
 
 gulp.task('watch', function() {
   gulp.watch(['public_src/styl/**/*.styl'], ['css']);
-  gulp.watch(['public_src/js/**/*.js'], ['js']);
+  gulp.watch(['public_src/js/**/*.js'], ['js', 'lint']);
   gulp.watch(['views/**/*.jade'], server.notify);
   gulp.watch(['public/**/*.css'], server.notify);
   gulp.watch(['public/**/*.js'], server.notify);
@@ -46,4 +56,4 @@ gulp.task('watch', function() {
 
 
 gulp.task('init', ['bower']);
-gulp.task('default', ['bower', 'css', 'js', 'server', 'watch']);
+gulp.task('default', ['bower', 'css', 'lint', 'js', 'server', 'watch']);

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*global require, module, console*/
+/*global require, module, console, document, window*/
 'use strict';
 
 var ViewPager = require('./libs/viewpager/src/viewpager');
@@ -25,7 +25,7 @@ function mod(m, n) {
 }
 
 function Adapter(items) {
-  var offScreenLimit = 1;
+  var offScreenLimit = 5;
   var view_size = (offScreenLimit * 2) + 1;
   var active_view_center = 0;
   var i;
@@ -33,7 +33,7 @@ function Adapter(items) {
   for (i = 0; i < view_size; i++) {
     var item = document.createElement('div');
     item.className = 'pager-item-day';
-    item.innerHTML = 'page ' + i;
+    item.innerHTML = 'recycle-view: ' + i;
     fragment.appendChild(item);
   }
   view_pager_elem.appendChild(fragment.cloneNode(true));

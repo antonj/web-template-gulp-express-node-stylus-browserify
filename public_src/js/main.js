@@ -1,4 +1,4 @@
-/*global require, module, console*/
+/*global require, module, console, document, window*/
 'use strict';
 
 var ViewPager = require('./libs/viewpager/src/viewpager');
@@ -9,7 +9,7 @@ function create_days_backwards(num) {
   var r = [];
   var i;
   for (i = 0; i < num; i++) {
-    r.push(now - (day_ms * i));
+    r.push(now - (day_ms * i));    
   }
   return r;
 }
@@ -24,7 +24,7 @@ function mod(m, n) {
 }
 
 function Adapter(items) {
-  var offScreenLimit = 1;
+  var offScreenLimit = 5;
   var view_size = (offScreenLimit * 2) + 1;
   var active_view_center = 0;
   var i;
@@ -32,7 +32,7 @@ function Adapter(items) {
   for (i = 0; i < view_size; i++) {
     var item = document.createElement('div');
     item.className = 'pager-item-day';
-    item.innerHTML = 'page ' + i;
+    item.innerHTML = 'recycle-view: ' + i;
     fragment.appendChild(item);
   }
   view_pager_elem.appendChild(fragment.cloneNode(true));
