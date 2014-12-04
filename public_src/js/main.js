@@ -3,7 +3,7 @@
 
 var ViewPager = require('./libs/viewpager/src/viewpager');
 
-function days(num) {
+function create_days_backwards(num) {
   var now = Date.now();
   var day_ms = 1000 * 60 * 60 * 24;
   var r = [];
@@ -18,33 +18,29 @@ var view_pager_elem = document.querySelector('.pager');
 var w = view_pager_elem.offsetWidth;
 var h = view_pager_elem.offsetHeight;
 
-function Adapter(items) {
-  console.log(items);
+/** modulus negative numbers */
+function mod(m, n) {
+  return ((m % n) + n) % n;
+}
 
-  var views = new Array(items.length);
-  items.forEach(function (d, i) {
+function Adapter(items) {
+  var offScreenLimit = 1;
+  var view_size = (offScreenLimit * 2) + 1;
+  var active_view_center = 0;
+  var i;
+  var fragment = document.createDocumentFragment();
+  for (i = 0; i < view_size; i++) {
     var item = document.createElement('div');
     item.className = 'pager-item-day';
-    item.innerHTML = '====> ' + i + ' <====<br />' + d;
-    view_pager_elem.appendChild(item);
-    views[i] = item;
-  });
+    item.innerHTML = 'page ' + i;
+    fragment.appendChild(item);
+  }
+  view_pager_elem.appendChild(fragment.cloneNode(true));
+  var views = view_pager_elem.children;
   
-  // var offScreenLimit = 1;
-  // var size = (offScreenLimit * 2) + 1;
-  // var i;
-  // var views = new Array(size);
-  // for (i = 0; i < size; i++) {
-  //   var item = document.createElement('div');
-  //   item.className = 'pager-item-day';
-  //   views[i] = item;
-  // }
-  console.log(views);
   
   return {
-    size : function () {
-      return items.length;
-    },
+    pages : items.length,
 
     getView : function (i, view) {
       var item = items[i];
@@ -53,60 +49,35 @@ function Adapter(items) {
 
     onPageScroll : function(offset, page) {
       // console.log(offset, page);
-      page = Math.max(0, page);
-      var active = views[page];
-        
-      active.style['-webkit-transform'] = 'translate3d('
-        + ((-offset * w)) + 'px,'
-        + ' 0px, 0px)';
-      console.log('active', active);
+      // start center
 
-      var i = page;
-      var o;
-      var page_offset;
-      while (--i >= 0) {
-        page_offset = i - page;
-        // console.log('less', i, page_offset, views[i]);
-        o = ((-offset * w) + (page_offset * w));
-        views[i].style['-webkit-transform'] = 'translate3d('
-          + o + 'px,'
-          + ' 0px, 0px)';        
-      }
+      var start = active_view_center;
 
-      i = page;
-      while (++i < views.length) {
-        page_offset = i - page;
-        // console.log('more', i, page_offset, views[i]);
-        o = ((-offset * w) + (page_offset * w));
-        views[i].style['-webkit-transform'] = 'translate3d('
-          + o + 'px,'
-          + ' 0px, 0px)';        
+      for (var i = 0, l = view_size; i < l; i++) {
+        var view = views[start];
+        var index_from_active = i - offScreenLimit;
+        console.log("a, s, i =>", active_view_center, start, index_from_active);
+        var o = ((-offset * w) + (index_from_active * w));
+        view.style['-webkit-transform'] = 'translate3d(' +
+          o + 'px,' +
+          ' 0px, 0px)';
+        start = (start + 1) % view_size;
       }
+      console.log('================');
     },
 
     onPageChange : function (page) {
-      console.log('page', page);
+      active_view_center = mod(page, view_size);
+      console.log('page', page, active_view_center);
     }
   };
 }
 
-var items = days(4).map(function (d) {
+var items = create_days_backwards(11).map(function (d) {
   return new Date(d);
 });
 var adapter = new Adapter(items);
+adapter.onPageScroll(0, 0);
 window.adapter = adapter;
 
-var vp = new ViewPager(view_pager_elem, {
-  pages: Number.MAX_VALUE, //adapter.size(),
-  onPageScroll : function (offset, page) {
-    adapter.onPageScroll(offset, page);
-  },
-
-  onPageChange : function (page) {
-    adapter.onPageChange(page);
-  },
-
-  onSizeChanged : function(width, height) {
-    w = width;
-  }
-});
+var vp = new ViewPager(view_pager_elem, adapter);
