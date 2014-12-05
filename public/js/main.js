@@ -10,7 +10,7 @@ function create_days_backwards(num) {
   var r = [];
   var i;
   for (i = 0; i < num; i++) {
-    r.push(now - (day_ms * i));
+    r.push(now - (day_ms * i));    
   }
   return r;
 }
@@ -25,9 +25,9 @@ function mod(m, n) {
 }
 
 function Adapter(items) {
-  var offScreenLimit = 5;
+  var offScreenLimit = 1;
   var view_size = (offScreenLimit * 2) + 1;
-  var active_view_center = 0;
+  var recycle_view_index = 0;
   var i;
   var fragment = document.createDocumentFragment();
   for (i = 0; i < view_size; i++) {
@@ -38,7 +38,6 @@ function Adapter(items) {
   }
   view_pager_elem.appendChild(fragment.cloneNode(true));
   var views = view_pager_elem.children;
-  
   
   return {
     pages : items.length,
@@ -52,12 +51,12 @@ function Adapter(items) {
       // console.log(offset, page);
       // start center
 
-      var start = active_view_center;
+      var start = recycle_view_index;
 
       for (var i = 0, l = view_size; i < l; i++) {
         var view = views[start];
         var index_from_active = i - offScreenLimit;
-        console.log("a, s, i =>", active_view_center, start, index_from_active);
+        console.log("a, s, i =>", recycle_view_index, start, index_from_active);
         var o = ((-offset * w) + (index_from_active * w));
         view.style['-webkit-transform'] = 'translate3d(' +
           o + 'px,' +
@@ -68,8 +67,10 @@ function Adapter(items) {
     },
 
     onPageChange : function (page) {
-      active_view_center = mod(page, view_size);
-      console.log('page', page, active_view_center);
+      recycle_view_index = mod(page, view_size);
+      var in_view = mod(recycle_view_index + offScreenLimit, view_size);
+      console.log('page', page, recycle_view_index);
+      views[in_view].innerHTML += '<br /> showing pos => ' + page;
     }
   };
 }
