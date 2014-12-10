@@ -1,90 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*global require, module, console, document, window*/
-'use strict';
-
-var ViewPager = require('./libs/viewpager/src/viewpager');
-
-function create_days_backwards(num) {
-  var now = Date.now();
-  var day_ms = 1000 * 60 * 60 * 24;
-  var r = [];
-  var i;
-  for (i = 0; i < num; i++) {
-    r.push(now - (day_ms * i));    
-  }
-  return r;
-}
-
-var view_pager_elem = document.querySelector('.pager');
-var w = view_pager_elem.offsetWidth;
-var h = view_pager_elem.offsetHeight;
-
-/** modulus negative numbers */
-function mod(m, n) {
-  return ((m % n) + n) % n;
-}
-
-function Adapter(items) {
-  var offScreenLimit = 1;
-  var view_size = (offScreenLimit * 2) + 1;
-  var recycle_view_index = 0;
-  var i;
-  var fragment = document.createDocumentFragment();
-  for (i = 0; i < view_size; i++) {
-    var item = document.createElement('div');
-    item.className = 'pager-item-day';
-    item.innerHTML = 'recycle-view: ' + i;
-    fragment.appendChild(item);
-  }
-  view_pager_elem.appendChild(fragment.cloneNode(true));
-  var views = view_pager_elem.children;
-  
-  return {
-    pages : items.length,
-
-    getView : function (i, view) {
-      var item = items[i];
-      view.innerHTML = item.text;
-    },
-
-    onPageScroll : function(offset, page) {
-      // console.log(offset, page);
-      // start center
-
-      var start = recycle_view_index;
-
-      for (var i = 0, l = view_size; i < l; i++) {
-        var view = views[start];
-        var index_from_active = i - offScreenLimit;
-        console.log("a, s, i =>", recycle_view_index, start, index_from_active);
-        var o = ((-offset * w) + (index_from_active * w));
-        view.style['-webkit-transform'] = 'translate3d(' +
-          o + 'px,' +
-          ' 0px, 0px)';
-        start = (start + 1) % view_size;
-      }
-      console.log('================');
-    },
-
-    onPageChange : function (page) {
-      recycle_view_index = mod(page, view_size);
-      var in_view = mod(recycle_view_index + offScreenLimit, view_size);
-      console.log('page', page, recycle_view_index);
-      views[in_view].innerHTML += '<br /> showing pos => ' + page;
-    }
-  };
-}
-
-var items = create_days_backwards(11).map(function (d) {
-  return new Date(d);
-});
-var adapter = new Adapter(items);
-adapter.onPageScroll(0, 0);
-window.adapter = adapter;
-
-var vp = new ViewPager(view_pager_elem, adapter);
-
-},{"./libs/viewpager/src/viewpager":5}],2:[function(require,module,exports){
 /*global module*/
 'use strict';
 
@@ -110,7 +24,7 @@ module.exports = {
   }
 };
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /*global module, clearTimeout, window*/
 'use strict';
 
@@ -146,7 +60,7 @@ if (!window.cancelAnimationFrame) {
 module.exports.requestAnimationFrame = window.requestAnimationFrame;
 module.exports.cancelAnimationFrame = window.cancelAnimationFrame;
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /*global module*/
 'use strict';
 
@@ -177,7 +91,7 @@ module.exports = {
   }
 };
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*global window, require, module */
 'use strict';
 
@@ -411,4 +325,90 @@ function ViewPager(elem, options) {
 
 module.exports = ViewPager;
 
-},{"./events":2,"./raf":3,"./utils":4}]},{},[1])
+},{"./events":1,"./raf":2,"./utils":3}],5:[function(require,module,exports){
+/*global require, module, console, document, window*/
+'use strict';
+
+var ViewPager = require('./components/viewpager/src/viewpager');
+
+function create_days_backwards(num) {
+  var now = Date.now();
+  var day_ms = 1000 * 60 * 60 * 24;
+  var r = [];
+  var i;
+  for (i = 0; i < num; i++) {
+    r.push(now - (day_ms * i));    
+  }
+  return r;
+}
+
+var view_pager_elem = document.querySelector('.pager');
+var w = view_pager_elem.offsetWidth;
+var h = view_pager_elem.offsetHeight;
+
+/** modulus negative numbers */
+function mod(m, n) {
+  return ((m % n) + n) % n;
+}
+
+function Adapter(items) {
+  var offScreenLimit = 1;
+  var view_size = (offScreenLimit * 2) + 1;
+  var recycle_view_index = 0;
+  var i;
+  var fragment = document.createDocumentFragment();
+  for (i = 0; i < view_size; i++) {
+    var item = document.createElement('div');
+    item.className = 'pager-item-day';
+    item.innerHTML = 'recycle-view: ' + i;
+    fragment.appendChild(item);
+  }
+  view_pager_elem.appendChild(fragment.cloneNode(true));
+  var views = view_pager_elem.children;
+  
+  return {
+    pages : items.length,
+
+    getView : function (i, view) {
+      var item = items[i];
+      view.innerHTML = item.text;
+    },
+
+    onPageScroll : function(offset, page) {
+      // console.log(offset, page);
+      // start center
+
+      var start = recycle_view_index;
+
+      for (var i = 0, l = view_size; i < l; i++) {
+        var view = views[start];
+        var index_from_active = i - offScreenLimit;
+        console.log("a, s, i =>", recycle_view_index, start, index_from_active);
+        var o = ((-offset * w) + (index_from_active * w));
+        view.style['-webkit-transform'] = 'translate3d(' +
+          o + 'px,' +
+          ' 0px, 0px)';
+        start = (start + 1) % view_size;
+      }
+      console.log('================');
+    },
+
+    onPageChange : function (page) {
+      recycle_view_index = mod(page, view_size);
+      var in_view = mod(recycle_view_index + offScreenLimit, view_size);
+      console.log('page', page, recycle_view_index);
+      views[in_view].innerHTML += '<br /> showing pos => ' + page;
+    }
+  };
+}
+
+var items = create_days_backwards(11).map(function (d) {
+  return new Date(d);
+});
+var adapter = new Adapter(items);
+adapter.onPageScroll(0, 0);
+window.adapter = adapter;
+
+var vp = new ViewPager(view_pager_elem, adapter);
+
+},{"./components/viewpager/src/viewpager":4}]},{},[5])

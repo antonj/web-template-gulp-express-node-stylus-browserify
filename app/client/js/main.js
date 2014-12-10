@@ -1,7 +1,7 @@
 /*global require, module, console, document, window*/
 'use strict';
 
-var ViewPager = require('./libs/viewpager/src/viewpager');
+var ViewPager = require('./components/viewpager/src/viewpager');
 
 function create_days_backwards(num) {
   var now = Date.now();
