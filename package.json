@@ -19,6 +19,9 @@
   "dependencies": {
     "express": "^4.10.4",
     "jade": "^1.8.1",
-    "path": "^0.4.9"
+    "node-cache": "^1.0.3",
+    "path": "^0.4.9",
+    "request": "^2.51.0",
+    "rx": "^2.3.22"
   }
 }
