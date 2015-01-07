@@ -48,10 +48,12 @@ gulp.task('server', function () {
 gulp.task('watch', function() {
   gulp.watch(['app/client/styl/**/*.styl'], ['css']);
   gulp.watch(['app/client/js/**/*.js'], ['js', 'lint']);
-  gulp.watch(['app/server/**/*.js', '!app/client/js/**/*.js'], server.run);
+  gulp.watch(['app/server/**/*.js', 
+              '!app/server/public/**/*.js',
+              '!app/client/js/**/*.js'], server.run);
+  gulp.watch(['app/server/public/**/*.js'], server.notify);
   gulp.watch(['app/server/views/**/*.jade'], server.notify);
   gulp.watch(['app/server/public/**/*.css'], server.notify);
-  gulp.watch(['app/server/public/**/*.js'], server.notify);
 });
 
 
