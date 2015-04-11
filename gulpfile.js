@@ -20,7 +20,7 @@ gulp.task('js', function () {
   // Single entry point to browserify
   gulp.src('app/client/js/main.js')
     .pipe(browserify().on('error', gutil.log))
-    .pipe(gulp.dest('./app/server/public/js'))
+    .pipe(gulp.dest('./app/public/js'))
   ;
 });
 
@@ -33,8 +33,11 @@ gulp.task('lint', function() {
 // CSS
 gulp.task('css', function () {
   gulp.src('./app/client/styl/base.styl')
-    .pipe(stylus({use: [nib()]}))
-    .pipe(gulp.dest('./app/server/public/css'));
+    .pipe(stylus({
+      use: [nib()],
+      'include css': true
+    }))
+    .pipe(gulp.dest('./app/public/css'));
 });
 
 // Run express server
@@ -42,18 +45,17 @@ gulp.task('server', function () {
   server.run({
     file: 'app.js'
   });
-  shell('open http://localhost:3000');
 });
 
 gulp.task('watch', function() {
   gulp.watch(['app/client/styl/**/*.styl'], ['css']);
   gulp.watch(['app/client/js/**/*.js'], ['js', 'lint']);
-  gulp.watch(['app/server/**/*.js', 
-              '!app/server/public/**/*.js',
+  gulp.watch(['app/**/*.js',
+              '!app/public/**/*.js',
               '!app/client/js/**/*.js'], server.run);
-  gulp.watch(['app/server/public/**/*.js'], server.notify);
-  gulp.watch(['app/server/views/**/*.jade'], server.notify);
-  gulp.watch(['app/server/public/**/*.css'], server.notify);
+  gulp.watch(['app/public/**/*.js'], server.notify);
+  gulp.watch(['app/views/**/*.jade'], server.notify);
+  gulp.watch(['app/public/**/*.css'], server.notify);
 });
 
 
